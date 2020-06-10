@@ -2,7 +2,7 @@ package com.Tomer.lucene;
 
 import java.io.IOException;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 

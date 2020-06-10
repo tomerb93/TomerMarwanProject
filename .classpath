@@ -6,6 +6,9 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Dev/IR-project-files/lucene-8.5.2/core/lucene-core-8.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marwan/Git/TomerMarwanProject/lucene-analyzers-common-8.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marwan/Git/TomerMarwanProject/lucene-core-8.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marwan/Git/TomerMarwanProject/lucene-queries-8.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/marwan/Git/TomerMarwanProject/lucene-queryparser-8.5.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
