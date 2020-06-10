@@ -1,37 +1,41 @@
 package com.Tomer.lucene;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.IOException;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
+
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 
 public class Indexer {
-	private Indexer writer;
+	private IndexWriter writer;
 
 	@SuppressWarnings("deprecation")
 	public Indexer(String indexDirectoryPath) throws IOException {
 		// this directory will contain the indexes
-		Analyzer analyzer = new StandardAnalyzer();
+		
+		Analyzer enAnalyzer = new EnglishAnalyzer();
 		Similarity tfidfSim = new ClassicSimilarity();
-		IndexWriterConfig conf = new IndexWriterConfig(analyzer);
-
-		Directory indexDirectory = FSDirectory.open(new File(indexDirectoryPath));
-
+		IndexWriterConfig conf = new IndexWriterConfig(enAnalyzer);
+		conf.setSimilarity(tfidfSim);
+		Directory dir = FSDirectory.open(new File(indexDirectoryPath).toPath());
+		//incremental indexing
+		conf.setOpenMode(OpenMode.CREATE_OR_APPEND);
 		// create the indexer
-		writer = new Indexer(indexDirectory, new StandardAnalyzer(Version.LUCENE_8_5_2), true,
-				IndexWriter.Indexer.UNLIMITED);
+		writer = new IndexWriter(dir, conf);
+		
 	}
 
 	public void close() throws CorruptIndexException, IOException {
@@ -40,17 +44,11 @@ public class Indexer {
 
 	private Document getDocument(File file) throws IOException {
 		Document document = new Document();
-		// index file contents
-		Field contentField = new Field(LuceneConstants.CONTENTS, new FileReader(file));
-		// index file name
-		Field fileNameField = new Field(LuceneConstants.FILE_NAME, file.getName(), Field.Store.YES,
-				Field.Index.NOT_ANALYZED);
+		
+		document.add(new StringField(LuceneConstants.FILE_NAME, file.getName(), Store.YES));
+		document.add(new TextField(LuceneConstants.CONTENTS, new FileReader(file)));
+		document.add(new StringField(LuceneConstants.FILE_PATH, file.getCanonicalPath(), Store.YES));
 		// index file path
-		Field filePathField = new Field(LuceneConstants.FILE_PATH, file.getCanonicalPath(), Field.Store.YES,
-				Field.Index.NOT_ANALYZED);
-		document.add(contentField);
-		document.add(fileNameField);
-		document.add(filePathField);
 		return document;
 	}
 
@@ -68,6 +66,6 @@ public class Indexer {
 				indexFile(file);
 			}
 		}
-		return writer.numDocs();
+		return writer.getDocStats().numDocs;
 	}
 }
