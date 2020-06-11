@@ -2,7 +2,10 @@ package com.Tomer.lucene;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.channels.NonReadableChannelException;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.StringField;
@@ -19,6 +22,17 @@ import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONString;
+
+
+
+
+
+
+
 public class Indexer {
 	private IndexWriter writer;
 
@@ -32,7 +46,8 @@ public class Indexer {
 		conf.setSimilarity(tfidfSim);
 		Directory dir = FSDirectory.open(new File(indexDirectoryPath).toPath());
 		//incremental indexing
-		conf.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		//conf.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		conf.setOpenMode(OpenMode.CREATE);
 		// create the indexer
 		writer = new IndexWriter(dir, conf);
 		
@@ -62,8 +77,30 @@ public class Indexer {
 		// get all files in the data directory
 		File[] files = new File(dataDirPath).listFiles();
 		for (File file : files) {
+			System.out.println("names: " + file.getName());
+			if (file.getName().startsWith("table1.txt")) {
+				
+				//continue;
+			}
 			if (!file.isDirectory() && !file.isHidden() && file.exists() && file.canRead() && filter.accept(file)) {
+				System.out.println("try: " + new FileReader(file).toString());
 				indexFile(file);
+			} 
+			else if (file.getName().endsWith("json")) {
+				try {
+					System.out.println("inside try");
+					JSONArray arr = new JSONArray((file));
+					System.out.println("arr"+arr);
+					for (int i = 0; i < arr.length(); i++) {
+					    String text = arr.getJSONObject(i).toString();
+					    System.out.println(text);
+					    //doc.add(new TextField("contents", text), Store.YES));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					// TODO: handle exception
+				}
+				
 			}
 		}
 		return writer.getDocStats().numDocs;
