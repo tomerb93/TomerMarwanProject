@@ -11,7 +11,7 @@ import java.io.FileWriter;
 
 public class LuceneTester {
 	String indexDir = "C:\\Dev\\IR-project-files\\Index";
-	String dataDir = "C:\\Dev\\IR-project-files\\Data";
+	String dataDir = "C:\\Dev\\IR-project-files\\DataReal";
 	String searchOutputFile = "C:\\Dev\\IR-project-files\\SearchOutput.txt";
 	Indexer indexer;
 	Searcher searcher;
