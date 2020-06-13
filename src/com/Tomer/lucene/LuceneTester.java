@@ -10,9 +10,9 @@ import java.io.File;
 import java.io.FileWriter;
 
 public class LuceneTester {
-	String indexDir = "C:\\Dev\\IR-project-files\\Index";
-	String dataDir = "C:\\Dev\\IR-project-files\\DataReal";
-	String searchOutputFile = "C:\\Dev\\IR-project-files\\SearchOutput.txt";
+	String indexDir = "C:\\Users\\marwan\\Git\\TomerMarwanProject\\resources\\index";
+	String dataDir = "C:\\Users\\marwan\\Git\\TomerMarwanProject\\resources";
+	String searchOutputFile = "C:\\Users\\marwan\\Desktop\\tables_redi2_1\\index\\SearchOutput.txt";
 	Indexer indexer;
 	Searcher searcher;
 
@@ -20,8 +20,8 @@ public class LuceneTester {
 		LuceneTester tester;
 		try {
 			tester = new LuceneTester();
-//			tester.createIndex();
-			tester.search("world interest rates table");
+			tester.createIndex();
+			tester.search("worlds interested rate tables");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {

@@ -21,7 +21,7 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-
+import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
@@ -45,7 +45,7 @@ public class Indexer {
 		conf.setSimilarity(tfidfSim);
 		Directory dir = FSDirectory.open(new File(indexDirectoryPath).toPath());
 		// incremental indexing
-		conf.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		conf.setOpenMode(OpenMode.CREATE);
 		// create the indexer
 		writer = new IndexWriter(dir, conf);
 
@@ -88,33 +88,33 @@ public class Indexer {
 				Document doc = new Document();
 				JSONObject keyvalue = (JSONObject) jsonObject.get(keyStr);
 				doc.add(new StringField(LuceneConstants.TABLE_NAME, (String) keyStr, Field.Store.YES));
-				doc.add(new TextField(LuceneConstants.CONTENTS, (String) keyvalue.toString(), Field.Store.YES));
-//				keyvalue.keySet().forEach(keyStrInner -> {
-//					switch ((String) keyStrInner) {
+				//doc.add(new TextField(LuceneConstants.CONTENTS, (String) keyvalue.toString(), Field.Store.YES));
+				keyvalue.keySet().forEach(keyStrInner -> {
+					switch ((String) keyStrInner) {
 //					case "numHeaderRows":
 //						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
 //								Field.Store.YES));
 //						break;
-//					case "data":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
-//					case "secondTitle":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
-//					case "caption":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
+					case "data":
+						doc.add(new TextField(LuceneConstants.CONTENTS, keyvalue.get(keyStrInner).toString(),
+								Field.Store.NO));
+						break;
+					case "secondTitle":
+						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
+								Field.Store.YES));
+						break;
+					case "caption":
+						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
+								Field.Store.YES));
+						break;
 //					case "numericColumns":
 //						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
 //								Field.Store.YES));
 //						break;
-//					case "title":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
+					case "title":
+						doc.add(new StringField((String) keyStrInner, keyvalue.get(keyStrInner).toString(),
+								Field.Store.YES));
+						break;
 //					case "numDataRows":
 //						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
 //								Field.Store.YES));
@@ -123,16 +123,16 @@ public class Indexer {
 //						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
 //								Field.Store.YES));
 //						break;
-//					case "pgTitle":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
-//					default:
+					case "pgTitle":
+						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
+								Field.Store.YES));
+						break;
+					default:
 //						System.out.println("Undefined field");
-//					}
-//				});
+					}
+				});
 				try {
-					System.out.println(doc);
+//					System.out.println(doc);
 					writer.addDocument(doc);
 				} catch (IOException e) {
 					e.printStackTrace();
