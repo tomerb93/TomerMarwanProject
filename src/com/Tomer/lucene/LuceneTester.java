@@ -20,7 +20,7 @@ public class LuceneTester {
 		LuceneTester tester;
 		try {
 			tester = new LuceneTester();
-			tester.createIndex();
+//			tester.createIndex();
 			tester.search("world interest rates table");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -51,8 +51,9 @@ public class LuceneTester {
 		int i = 1;
 		for (ScoreDoc scoreDoc : hits.scoreDocs) {
 			Document doc = searcher.getDocument(scoreDoc);
-			// System.out.println("File: " + doc.get(LuceneConstants.FILE_PATH));
-			fr.write("1    Q0    " + doc.get(LuceneConstants.TABLE_NAME) + "    " + i + "    tomer's team");
+			fr.write("1    Q0    " + doc.get(LuceneConstants.TABLE_NAME) + "    " + i + "    " + scoreDoc.score
+					+ "    TomerMaryan's Team \n");
+			i++;
 		}
 		fr.close();
 		searcher.close();
