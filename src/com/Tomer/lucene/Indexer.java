@@ -2,35 +2,27 @@ package com.Tomer.lucene;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.Iterator;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 
 public class Indexer {
@@ -53,16 +45,6 @@ public class Indexer {
 
 	public void close() throws CorruptIndexException, IOException {
 		writer.close();
-	}
-
-	private Document addDocument(JSONArray jsonObjects) throws IOException {
-		Document document = new Document();
-
-//		document.add(new StringField(LuceneConstants.FILE_NAME, file.getName(), Store.YES));
-//		document.add(new TextField(LuceneConstants.CONTENTS, new FileReader(file)));
-//		document.add(new StringField(LuceneConstants.FILE_PATH, file.getCanonicalPath(), Store.YES));
-		// index file path
-		return document;
 	}
 
 	private Object parseJSONFile(File file) throws IOException, org.json.simple.parser.ParseException {
@@ -88,59 +70,37 @@ public class Indexer {
 				Document doc = new Document();
 				JSONObject keyvalue = (JSONObject) jsonObject.get(keyStr);
 				doc.add(new StringField(LuceneConstants.TABLE_NAME, (String) keyStr, Field.Store.YES));
-				//doc.add(new TextField(LuceneConstants.CONTENTS, (String) keyvalue.toString(), Field.Store.YES));
 				keyvalue.keySet().forEach(keyStrInner -> {
 					switch ((String) keyStrInner) {
-//					case "numHeaderRows":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
-					case "data":
+					case LuceneConstants.DATA:
 						doc.add(new TextField(LuceneConstants.CONTENTS, keyvalue.get(keyStrInner).toString(),
 								Field.Store.NO));
 						break;
-					case "secondTitle":
-						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-								Field.Store.YES));
+					case LuceneConstants.SECOND_TITLE:
+						doc.add(new StringField(LuceneConstants.SECOND_TITLE, (String) keyvalue.get(keyStrInner),
+								Field.Store.NO));
 						break;
-					case "caption":
-						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-								Field.Store.YES));
+					case LuceneConstants.CAPTION:
+						doc.add(new StringField(LuceneConstants.CAPTION, (String) keyvalue.get(keyStrInner),
+								Field.Store.NO));
 						break;
-//					case "numericColumns":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
-					case "title":
-						doc.add(new StringField((String) keyStrInner, keyvalue.get(keyStrInner).toString(),
-								Field.Store.YES));
+					case LuceneConstants.TITLE:
+						var titleField = new StringField(LuceneConstants.TITLE, keyvalue.get(keyStrInner).toString(),
+								Field.Store.NO);
+						doc.add(titleField);
 						break;
-//					case "numDataRows":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
-//					case "numCols":
-//						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-//								Field.Store.YES));
-//						break;
-					case "pgTitle":
-						doc.add(new StringField((String) keyStrInner, (String) keyvalue.get(keyStrInner),
-								Field.Store.YES));
+					case LuceneConstants.PG_TITLE:
+						doc.add(new StringField(LuceneConstants.PG_TITLE, (String) keyvalue.get(keyStrInner),
+								Field.Store.NO));
 						break;
-					default:
-//						System.out.println("Undefined field");
 					}
 				});
 				try {
-//					System.out.println(doc);
 					writer.addDocument(doc);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			});
-
-			// Document document = addDocument(jsonObjects);
-			// writer.addDocument(document);
 
 		} catch (IOException e) {
 			e.printStackTrace();

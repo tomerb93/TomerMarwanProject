@@ -7,6 +7,7 @@ import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -25,7 +26,8 @@ public class Searcher {
 		Directory indexDirectory = FSDirectory.open(new File(indexDirectoryPath).toPath());
 		DirectoryReader dr = DirectoryReader.open(indexDirectory);
 		indexSearcher = new IndexSearcher(dr);
-		queryParser = new QueryParser(LuceneConstants.CONTENTS, new EnglishAnalyzer());
+		String[] fieldArray = { LuceneConstants.TITLE, LuceneConstants.CONTENTS, LuceneConstants.PG_TITLE };
+		queryParser = new MultiFieldQueryParser(fieldArray, new EnglishAnalyzer());
 	}
 
 	public TopDocs search(String searchQuery) throws IOException, ParseException {
@@ -38,6 +40,7 @@ public class Searcher {
 	}
 
 	public void close() throws IOException {
-		//indexSearcher.close();
+		// to-do: find proper close method for the searcher
+		// indexSearcher.close();
 	}
 }

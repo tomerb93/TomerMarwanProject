@@ -1,6 +1,7 @@
 package com.Tomer.lucene;
 
 import java.io.IOException;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
@@ -10,9 +11,12 @@ import java.io.File;
 import java.io.FileWriter;
 
 public class LuceneTester {
-	String indexDir = "C:\\Users\\marwan\\Git\\TomerMarwanProject\\resources\\index";
-	String dataDir = "C:\\Users\\marwan\\Git\\TomerMarwanProject\\resources";
-	String searchOutputFile = "C:\\Users\\marwan\\Desktop\\tables_redi2_1\\index\\SearchOutput.txt";
+//	String indexDir = "C:\\Users\\marwan\\Git\\TomerMarwanProject\\resources\\index";
+//	String dataDir = "C:\\Users\\marwan\\Git\\TomerMarwanProject\\resources";
+//	String searchOutputFile = "C:\\Users\\marwan\\Desktop\\tables_redi2_1\\index\\SearchOutput.txt";
+	String indexDir = "C:\\Dev\\IR-project-files\\Index";
+	String dataDir = "C:\\Dev\\IR-project-files\\DataReal";
+	String searchOutputFile = "C:\\Dev\\IR-project-files\\SearchOutput.txt";
 	Indexer indexer;
 	Searcher searcher;
 
@@ -21,7 +25,7 @@ public class LuceneTester {
 		try {
 			tester = new LuceneTester();
 			tester.createIndex();
-			tester.search("worlds interested rate tables");
+			tester.search("world interest rates table");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -51,8 +55,8 @@ public class LuceneTester {
 		int i = 1;
 		for (ScoreDoc scoreDoc : hits.scoreDocs) {
 			Document doc = searcher.getDocument(scoreDoc);
-			fr.write("1    Q0    " + doc.get(LuceneConstants.TABLE_NAME) + "    " + i + "    " + scoreDoc.score
-					+ "    TomerMaryan's Team \n");
+			fr.write("1\tQ0\t" + doc.get(LuceneConstants.TABLE_NAME) + "\t" + i + "\t" + scoreDoc.score
+					+ "\tTomerMarwan's Team\n");
 			i++;
 		}
 		fr.close();
