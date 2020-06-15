@@ -77,20 +77,20 @@ public class Indexer {
 								Field.Store.NO));
 						break;
 					case LuceneConstants.SECOND_TITLE:
-						doc.add(new StringField(LuceneConstants.SECOND_TITLE, (String) keyvalue.get(keyStrInner),
+						doc.add(new TextField(LuceneConstants.SECOND_TITLE, (String) keyvalue.get(keyStrInner),
 								Field.Store.NO));
 						break;
 					case LuceneConstants.CAPTION:
-						doc.add(new StringField(LuceneConstants.CAPTION, (String) keyvalue.get(keyStrInner),
+						doc.add(new TextField(LuceneConstants.CAPTION, (String) keyvalue.get(keyStrInner),
 								Field.Store.NO));
 						break;
 					case LuceneConstants.TITLE:
-						var titleField = new StringField(LuceneConstants.TITLE, keyvalue.get(keyStrInner).toString(),
+						var titleField = new TextField(LuceneConstants.TITLE, keyvalue.get(keyStrInner).toString(),
 								Field.Store.NO);
 						doc.add(titleField);
 						break;
 					case LuceneConstants.PG_TITLE:
-						doc.add(new StringField(LuceneConstants.PG_TITLE, (String) keyvalue.get(keyStrInner),
+						doc.add(new TextField(LuceneConstants.PG_TITLE, (String) keyvalue.get(keyStrInner),
 								Field.Store.NO));
 						break;
 					}
