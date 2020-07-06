@@ -11,6 +11,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -40,15 +41,16 @@ public class Searcher {
 				, LuceneConstants.SECOND_TITLE , LuceneConstants.CAPTION };
 		queryParser = new MultiFieldQueryParser(fieldArray, new EnglishAnalyzer());
 		booleanQueryParser = new MultiFieldQueryParser(booleanFieldArray, new EnglishAnalyzer());
+		//booleanQueryParser.setDefaultOperator(Operator.AND);
 	}
 
 	public TopDocs search(String searchQuery) throws IOException, ParseException {
-//		query = queryParser.parse(searchQuery);
-		query = booleanQueryParser.parse(searchQuery);
-		System.out.println(query);
-		booleanQuery = new BooleanQuery.Builder()
-				.add(new BooleanClause(query,BooleanClause.Occur.MUST))
-				.build();
+		query = queryParser.parse(searchQuery);
+//		query = booleanQueryParser.parse(searchQuery);
+//		System.out.println(query);
+//		booleanQuery = new BooleanQuery.Builder()
+//				.add(new BooleanClause(query,BooleanClause.Occur.MUST))
+//				.build();
 		return indexSearcher.search(query, LuceneConstants.MAX_SEARCH);
 	}
 

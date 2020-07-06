@@ -17,8 +17,10 @@ import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
+import org.apache.lucene.search.similarities.TFIDFSimilarity;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 
@@ -32,7 +34,9 @@ public class Indexer {
 		// this directory will contain the indexes
 
 		Analyzer enAnalyzer = new EnglishAnalyzer();
-		Similarity tfidfSim = new ClassicSimilarity();
+		//Similarity tfidfSim = new ClassicSimilarity();
+		Similarity tfidfSim = new BM25Similarity();
+		
 		IndexWriterConfig conf = new IndexWriterConfig(enAnalyzer);
 		conf.setSimilarity(tfidfSim);
 		Directory dir = FSDirectory.open(new File(indexDirectoryPath).toPath());
