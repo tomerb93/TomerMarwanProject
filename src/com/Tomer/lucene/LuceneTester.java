@@ -11,21 +11,23 @@ import java.io.File;
 import java.io.FileWriter;
 
 public class LuceneTester {
-	String indexDir = "C:\\Users\\marwan\\Desktop\\tables_redi2_1\\index2";
-	String dataDir = "C:\\Users\\marwan\\Git\\TomerMarwanProject\\resources";
-	String searchOutputFile = "C:\\Users\\marwan\\Desktop\\tables_redi2_1\\index2\\SearchOutput2.txt";
-//	String indexDir = "C:\\Dev\\IR-project-files\\Index";
-//	String dataDir = "C:\\Dev\\IR-project-files\\DataReal";
-//	String searchOutputFile = "C:\\Dev\\IR-project-files\\SearchOutput.txt";
+	String indexDir = "C:\\Dev\\IR-project-files\\Index";
+	String dataDir = "C:\\Dev\\IR-project-files\\DataReal";
+	String searchOutputFolder = "C:\\Dev\\IR-project-files\\SearchOutput";
 	Indexer indexer;
 	Searcher searcher;
 
 	public static void main(String[] args) {
 		LuceneTester tester;
 		try {
+
 			tester = new LuceneTester();
 			tester.createIndex();
-			tester.search("world interest rates table");
+
+			for (int i = 0; i < LuceneConstants.QUERIES.length; i++) {
+				tester.search(LuceneConstants.QUERIES[i], i + 1);
+			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -35,31 +37,39 @@ public class LuceneTester {
 
 	private void createIndex() throws IOException, ParseException {
 		indexer = new Indexer(indexDir);
+
 		int numIndexed;
+
 		long startTime = System.currentTimeMillis();
 		numIndexed = indexer.createIndex(dataDir, new TextFileFilter());
 		long endTime = System.currentTimeMillis();
+
 		indexer.close();
+
 		System.out.println(numIndexed + " File indexed, time taken: " + (endTime - startTime) + " ms");
 	}
 
-	private void search(String searchQuery) throws IOException, ParseException {
+	private void search(String searchQuery, int currQueryID) throws IOException, ParseException {
+
 		searcher = new Searcher(indexDir);
+
 		long startTime = System.currentTimeMillis();
 		TopDocs hits = searcher.search(searchQuery);
 		long endTime = System.currentTimeMillis();
 
 		System.out.println(hits.totalHits + " documents found. Time :" + (endTime - startTime));
-		File file = new File(searchOutputFile);
+
+		File file = new File(searchOutputFolder + "\\searchOutput_" + currQueryID + "_.txt");
 		FileWriter fr = new FileWriter(file);
 		int i = 1;
+
 		for (ScoreDoc scoreDoc : hits.scoreDocs) {
 			Document doc = searcher.getDocument(scoreDoc);
-			fr.write("1\tQ0\t" + doc.get(LuceneConstants.TABLE_NAME) + "\t" + i + "\t" + scoreDoc.score
+			fr.write(currQueryID + "\tQ0\t" + doc.get(LuceneConstants.TABLE_NAME) + "\t" + i + "\t" + scoreDoc.score
 					+ "\tTomerMarwan's Team\n");
 			i++;
 		}
+
 		fr.close();
-		searcher.close();
 	}
 }

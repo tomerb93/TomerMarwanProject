@@ -18,9 +18,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
-import org.apache.lucene.search.similarities.TFIDFSimilarity;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 
@@ -31,20 +29,19 @@ public class Indexer {
 	private IndexWriter writer;
 
 	public Indexer(String indexDirectoryPath) throws IOException {
-		// this directory will contain the indexes
-
 		Analyzer enAnalyzer = new EnglishAnalyzer();
-		//Similarity tfidfSim = new ClassicSimilarity();
+		// Similarity tfidfSim = new ClassicSimilarity();
 		Similarity tfidfSim = new BM25Similarity();
-		
-		IndexWriterConfig conf = new IndexWriterConfig(enAnalyzer);
-		conf.setSimilarity(tfidfSim);
-		Directory dir = FSDirectory.open(new File(indexDirectoryPath).toPath());
-		// incremental indexing
-		conf.setOpenMode(OpenMode.CREATE);
-		// create the indexer
-		writer = new IndexWriter(dir, conf);
 
+		IndexWriterConfig conf = new IndexWriterConfig(enAnalyzer);
+
+		conf.setSimilarity(tfidfSim);
+
+		Directory dir = FSDirectory.open(new File(indexDirectoryPath).toPath());
+
+		conf.setOpenMode(OpenMode.CREATE);
+
+		writer = new IndexWriter(dir, conf);
 	}
 
 	public void close() throws CorruptIndexException, IOException {
@@ -56,11 +53,11 @@ public class Indexer {
 		JSONParser parser = new JSONParser();
 		// Get the JSON file, in this case is in ~/resources/test.json
 		InputStream jsonFile = getClass().getClassLoader().getResourceAsStream(file.getName());
+
 		Reader readerJson = new InputStreamReader(jsonFile);
 
 		// Parse the JSON file using simple-JSON library
 		return parser.parse(readerJson);
-
 	}
 
 	@SuppressWarnings("unchecked")
